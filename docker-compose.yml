@@ -56,3 +56,5 @@ networks:
     external: true
   qdrant:
     external: true
+  nginx-network:
+    external: true
