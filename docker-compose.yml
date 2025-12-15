@@ -16,10 +16,11 @@ services:
       - RETRIEVAL_API_KEY=${RETRIEVAL_API_KEY}
       - BM25_CACHE_DIR=/app/data/.cache_fastembed
     volumes:
-      - hrchat_retrieval_data:/app/data
+      - hrchat-retrieval_data:/app/data
     networks:
       - n8n
       - qdrant
+      - default
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/healthz" ]
       interval: 30s
@@ -27,11 +28,30 @@ services:
       retries: 3
       start_period: 30s
 
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui_data:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - n8n
+      - qdrant
+      - default
+
 volumes:
-  hrchat_retrieval_data:
-    name: hrchat_retrieval_data
+  hrchat-retrieval_data:
+    name: hrchat-retrieval_data
+  openwebui_data:
+    name: openwebui_data
 
 networks:
+  default:
+    name: hrchat
   n8n:
     external: true
   qdrant:
