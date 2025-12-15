@@ -1,0 +1,38 @@
+services:
+  hrchat-retrieval:
+    image: ghcr.io/prb-naoby/hrchat-retrieval:latest
+    container_name: hrchat-retrieval
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_COLLECTION=${QDRANT_COLLECTION}
+      - BM25_MODEL=${BM25_MODEL}
+      - DENSE_EMBEDDING_MODEL=${DENSE_EMBEDDING_MODEL}
+      - BM25_API_KEY=${BM25_API_KEY}
+      - RETRIEVAL_API_KEY=${RETRIEVAL_API_KEY}
+      - BM25_CACHE_DIR=/app/data/.cache_fastembed
+    volumes:
+      - hrchat_retrieval_data:/app/data
+    networks:
+      - n8n
+      - qdrant
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthz" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  hrchat_retrieval_data:
+    name: hrchat_retrieval_data
+
+networks:
+  n8n:
+    external: true
+  qdrant:
+    external: true

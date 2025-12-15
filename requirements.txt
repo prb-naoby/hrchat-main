@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+httpx
+requests
+qdrant-client
+fastembed
+google-genai
